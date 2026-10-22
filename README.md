@@ -6,7 +6,7 @@ repository Git** — tidak ada database tradisional.
 
 - **Public website**: Beranda, Tentang Kami, Menu, Acara, Galeri, Kontak
 - **Dashboard admin**: `/admin/` (Decap CMS) — kelola menu, acara, galeri, dan pengaturan situs
-- **Hosting**: Cloudflare Pages (build statis ke folder `dist/`)
+- **Hosting**: Netlify (build statis ke folder `dist/`, login admin via Netlify Identity)
 
 ---
 
@@ -115,7 +115,7 @@ Catatan:
 - Format: `.jpg` / `.png` / `.webp` / `.avif`. Boleh SVG untuk ilustrasi.
 - Jika file tidak ada, section otomatis menampilkan placeholder — layout tidak pernah rusak.
 - Perubahan konten **baru tampil di website live setelah build/deployment selesai**
-  (otomatis berjalan di Cloudflare Pages setelah push ke Git).
+  (otomatis berjalan di Netlify setelah push ke Git).
 
 ---
 
@@ -182,8 +182,9 @@ Selesai — tidak perlu GitHub OAuth App, tidak perlu server OAuth terpisah.
 
 > **Samakan nama site**: pastikan nama site di Netlify = `kopi-kita-kita` supaya domain
 > jadi `https://kopi-kita-kita.netlify.app`, sesuai `site_url` di `config.yml`.
-> Kalau namanya beda, ubah `site_url`/`display_url` di `config.yml` **dan** `siteUrl` di
-> `src/content/settings/site.json`, lalu commit ulang.
+> Kalau namanya beda, ubah **dua** tempat ini lalu commit ulang:
+> `site_url`/`display_url` di `public/admin/config.yml`, dan `site` di
+> `astro.config.mjs`.
 
 ### Alternatif: Decap CMS OAuth Server (bila kelak pindah ke Cloudflare Pages / Vercel)
 
@@ -302,7 +303,7 @@ atau email Anda belum diundang. Ulangi §7 langkah 3–5.
 | Detail produk & detail acara | ✅ |
 | Draft acara tidak tampil di publik | ✅ (dibuktikan: acara draft tidak ada di /acara/ dan tidak di-route) |
 | Footer konsisten di semua halaman | ✅ satu komponen `Footer.astro` |
-| Login Decap / commit via CMS | ⏳ belum — butuh setup OAuth (§7) |
+| Login Decap / commit via CMS | ⏳ belum — butuh Netlify Identity + Git Gateway aktif (§7) |
 | Upload gambar via CMS | ⏳ belum — mengikuti status login |
 | Responsive mobile | ✅ ditinjau di viewport kecil; lanjut uji perangkat nyata disarankan |
 
@@ -318,7 +319,8 @@ atau email Anda belum diundang. Ulangi §7 langkah 3–5.
    placeholder sebagai fakta bisnis.**
 3. **Peta** — selama `coordinates` null, peta hanya ilustrasi. Isi `lat`/`lng` di settings
    → halaman Kontak otomatis menampilkan embed Google Maps.
-4. **CMS butuh OAuth** — belum berfungsi sebelum langkah §7 dijalankan dan diuji.
+4. **CMS butuh Identity** — belum berfungsi sebelum langkah §7 (Enable Identity +
+   Git Gateway + undang user) dijalankan dan diuji.
 5. **Bukan toko online** — tidak ada cart/checkout/pembayaran, sesuai kebutuhan katalog.
 6. **Git + deployment** — konten tersimpan di Git; perubahan baru tampil setelah build
-   sukses di Cloudflare Pages.
+   sukses di Netlify.
