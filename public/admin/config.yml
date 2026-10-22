@@ -1,20 +1,17 @@
 # ============================================================
 # Decap CMS — konfigurasi dashboard admin Kopi Kita Kita
 # ============================================================
-# Backend: GitHub (OAuth lewat Git Gateway / Decap OAuth server)
+# Backend: Netlify Identity + Git Gateway (login /admin otomatis, tanpa OAuth server)
 # Penyimpanan: file JSON di repository Git — BUKAN database.
 #
 # Setelah CMS menulis file, website publik baru menampilkan perubahan
-# setelah proses build/deployment Cloudflare Pages selesai.
+# setelah proses build/deployment Netlify selesai.
 # ============================================================
 
 backend:
-  name: github
-  repo: anazm/kopi-kita-kita # <-- GANTI: username/nama-repo GitHub Anda
-  branch: main
-  # base_url diisi bila memakai Decap OAuth Server (self-hosted),
-  # contoh: https://oauth.example.com
-  # base_url: https://oauth.example.com
+  # Netlify Identity menyediakan login; Git Gateway menyediakan akses repo.
+  # Keduanya aktif otomatis saat Identity dinyalakan di dashboard Netlify.
+  name: netlify
 
 publish_mode: editorial_workflow
 
@@ -26,8 +23,10 @@ public_folder: /images/uploads
 editor:
   preview: false
 
-site_url: https://kopi-kita-kita.pages.dev
-display_url: https://kopi-kita-kita.pages.dev
+# Catatan: kalau nama site di Netlify diganti, sesuaikan juga dua baris di bawah
+# DAN `siteUrl` di src/content/settings/site.json (pindah bareng).
+site_url: https://kopi-kita-kita.netlify.app
+display_url: https://kopi-kita-kita.netlify.app
 
 locale: id
 

@@ -146,104 +146,148 @@ Koleksi yang tersedia:
 | Galeri | `src/content/gallery/` |
 | Pengaturan Situs (nama, tagline, logo, **background**, kontak, lokasi) | `src/content/settings/site.json` |
 
-> **Status saat ini**: konfigurasi CMS sudah lengkap dan sesuai schema, **tetapi autentikasi
-> GitHub belum diuji** — itu memerlukan setup GitHub OAuth (langkah manual, lihat §7).
-> Sebelum itu, CMS belum bisa dipakai menyimpan konten. Jangan mengklaim CMS sudah berfungsi
-> sebelum diuji end-to-end.
+> **Status**: konfigurasi CMS sudah lengkap dan sesuai schema, dan `backend` sudah di-set
+> ke **Netlify**. Login diuji end-to-end **setelah** langkah §7 selesai (butuh site yang sudah
+> ter-deploy + Identity aktif). Sebelum itu `/admin/` hanya menampilkan layar login yang tidak
+> bisa dilanjutkan. Jangan mengklaim CMS sudah berfungsi sebelum diuji: login → edit →
+> publish → commit masuk repo → Netlify rebuild → halaman publik ter-update.
 
 ---
 
-## 7. Autentikasi CMS — Yang Masih Perlu Dilakukan Manual
+## 7. Autentikasi CMS — Langkah Manual
 
-Decap CMS dengan backend GitHub **tidak punya login bawaan**. Anda harus menyediakan
-sebuah **OAuth authorization endpoint**. Tanpa ini, `/admin/` hanya menampilkan layar login
-yang tidak bisa dilanjutkan. Jangan taruh token/password apa pun di kode frontend.
+Decap CMS tidak punya login bawaan. Tanpa sebuah **OAuth / Identity provider**, `/admin/`
+hanya menampilkan layar login yang tidak bisa dilanjutkan. Jangan taruh token/password
+apa pun di kode frontend.
 
-### Opsi (pilih satu)
+### Jalur yang dipakai: Netlify Identity (Opsi utama)
 
-**Opsi A — Decap CMS OAuth Server (2026, cara paling umum, murah/gratis)**
+`public/admin/config.yml` sudah diset `backend.name: netlify`, jadi tinggal:
 
-1. Deploy [Decap CMS OAuth Server](https://github.com/decap-cms/decap-cms-oauth-server-proxy)
-   (contoh ke Vercel/Netlify, gratis) **atau** pakai penyedia layanan OAuth Decap.
-2. Buat **GitHub OAuth App** di GitHub → *Settings → Developer settings → OAuth Apps → New*:
+1. **Push repo ke GitHub** (lihat §8).
+2. Di [Netlify](https://app.netlify.com): *Add new site → Import an existing project →
+   GitHub →* pilih `kopi-kita-kita`.
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Node version diambil dari `engines` di `package.json`.
+   Biarkan deploy pertama selesai.
+3. **Nyalakan Identity**: *Site configuration → Identity → Enable Identity*.
+4. **Nyalakan Git Gateway**: *Identity → Services → Git Gateway → Enable*.
+   Ini yang membuat Decap CMS bisa commit ke GitHub.
+5. **Undang diri sendiri**: *Identity → Users → Invite users* → masukkan email Anda →
+   buka tautan undangan → set password → *Login*.
+6. Buka `https://<nama-site-anda>.netlify.app/admin/` → login dengan email + password tadi.
+
+Selesai — tidak perlu GitHub OAuth App, tidak perlu server OAuth terpisah.
+
+> **Samakan nama site**: pastikan nama site di Netlify = `kopi-kita-kita` supaya domain
+> jadi `https://kopi-kita-kita.netlify.app`, sesuai `site_url` di `config.yml`.
+> Kalau namanya beda, ubah `site_url`/`display_url` di `config.yml` **dan** `siteUrl` di
+> `src/content/settings/site.json`, lalu commit ulang.
+
+### Alternatif: Decap CMS OAuth Server (bila kelak pindah ke Cloudflare Pages / Vercel)
+
+Host tersebut tidak punya Identity bawaan, jadi perlu OAuth proxy sendiri:
+
+1. Deploy [Decap CMS OAuth Server](https://github.com/decap-cms/decap-cms-oauth-server-proxy).
+2. Buat **GitHub OAuth App** (*Settings → Developer settings → OAuth Apps → New*):
    - Homepage URL: `https://<domain-anda>`
    - Authorization callback URL: `https://<oauth-server-anda>/callback`
-3. Dapatkan `Client ID` dan `Client Secret`.
-4. Set environment variable di server OAuth (bukan di website ini):
-   `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`, `GATEWAY_PROVIDER=github`.
-5. Di `public/admin/config.yml`, tambahkan:
+3. Set `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`, `GATEWAY_PROVIDER=github` di server OAuth
+   (bukan di website ini).
+4. Balikkan `backend` di `config.yml` menjadi:
 
    ```yaml
    backend:
      name: github
-     repo: <username>/kopi-kita-kita
+     repo: anazmi121-cloud/kopi-kita-kita
      branch: main
      base_url: https://<oauth-server-anda>
    ```
 
-**Opsi B — Netlify Identity (gratis, paling cepat kalau mau pakai Netlify)**
-
-`backend: { name: netlify, identity_provider: netlify }` + aktifkan Identity di dashboard
-Netlify. **Catatan**: butuh akun Netlify; untuk hosting di Cloudflare Pages Anda tetap bisa
-memakai Netlify Identity sebagai layanan auth terpisah, tapi lebih banyak pindah-pindah
-dashboard. Opsi A lebih cocok untuk hosting Cloudflare Pages.
-
 ### Biaya
 
-- GitHub OAuth App: **gratis**.
-- Server OAuth (Opsi A): gratis di tier hobby (Vercel/Netlify), bisa ditingkat kalau perlu.
-- Netlify Identity: gratis untuk situs personal.
-- Tidak ada biaya tambahan untuk website ini sendiri (Cloudflare Pages gratis).
+- Netlify Identity + Git Gateway: **gratis** untuk situs personal.
+- GitHub OAuth App & server OAuth (alternatif): gratis di tier hobby.
+- Tidak ada biaya tambahan untuk website ini sendiri.
 
 ### Memberi / Mencabut Akses Editor
 
-Akses ditentukan oleh **siapa yang punya akses commit ke repository GitHub** (plus cara Anda
-membagikan login OAuth, misal Netlify Identity user list):
+Untuk tiap editor, lakukan **dua** hal ini (salah satu saja tidak cukup):
 
-1. **Memberi**: undang collaborator di GitHub (*repo → Settings → Collaborators*) **dan**
-   tambahkan emailnya sebagai user di layanan auth (Netlify Identity / OAuth server Anda).
-2. **Mencabut**: hapus collaborator di GitHub + hapus user di layanan auth.
+1. **Memberi**: *repo GitHub → Settings → Collaborators → Add people* **dan**
+   undang emailnya lewat *Identity → Users → Invite users*.
+2. **Mencabut**: hapus collaborator di GitHub **dan** hapus user di Netlify Identity.
 
 ### Kejujuran status
 
 - Konfigurasi koleksi CMS: **selesai** (dicocokkan dengan schema Astro).
-- Autentikasi & alur commit CMS → Git → deploy: **BELUM diuji**, harus dikonfigurasi manual
-  (OAuth server di atas) lalu diuji: login → edit → publish → commit masuk repo →
-  Cloudflare Pages rebuild → halaman publik ter-update.
+- `backend` CMS: **sudah di-set ke Netlify**, tapi **belum diuji end-to-end** — langkah 1–6
+  di atas masih manual dan harus diverifikasi: login → edit → publish → commit masuk repo →
+  Netlify rebuild → halaman publik ter-update.
 - Tidak ada password/token di frontend. Customer (pengunjung biasa) **tidak bisa mengubah
-  konten** — tidak ada endpoint tulis di website publik; tulis hanya lewat Git/GitHub API
-  yang diautentikasi di belakang OAuth.
+  konten** — tidak ada endpoint tulis di website publik; tulis hanya lewat Git API yang
+  diautentikasi di belakang Netlify Identity.
 
 ---
 
-## 8. Deploy ke Cloudflare Pages
+## 8. Push ke GitHub + Deploy ke Netlify
 
-1. **Buat repository GitHub** (misal dari folder ini):
+Repository `anazmi121-cloud/kopi-kita-kita` sudah ada dan remote `origin` sudah terpasang.
 
-   ```bash
-   git init -b main
-   git add .
-   git commit -m "Initial commit: Kopi Kita Kita"
-   git remote add origin https://github.com/<username>/kopi-kita-kita.git
-   git push -u origin main
-   ```
+### 8a. Push perubahan ke GitHub (dari komputer)
 
-2. Buka Cloudflare Dashboard → **Workers & Pages → Create → Pages → Connect to Git**.
-3. Pilih repository. Isi:
-   - **Framework preset**: Astro
+```bash
+cd "C:\Users\anazm\Downloads\WEB KOPI KITA KITA\kopi-kita-kita"
+
+# kalau pernah crash dan git bilang "index.lock exists":
+del .git\index.lock
+
+git add -A
+git commit -m "Lengkapkan konten, tipografi Cinzel, dan konfigurasi admin Netlify"
+git push origin main
+```
+
+> Commit pertama repo masih memakai author `nama-anda` (placeholder). Untuk perbaiki:
+> `git config user.name "Nama Asli"` dan `git config user.email "email@anda.com"`,
+> lalu `git commit --amend --reset-author` pada commit terakhir **sebelum** push.
+
+### 8b. Deploy ke Netlify
+
+1. Buka [app.netlify.com](https://app.netlify.com) → *Add new site → Import an existing
+   project → GitHub* → pilih `kopi-kita-kita`.
+2. Isi:
+   - **Site name**: `kopi-kita-kita` (agar domain jadi
+     `https://kopi-kita-kita.netlify.app`, sesuai `config.yml`)
    - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-4. Deploy. Setelah sukses, Anda dapat URL gratis:
-   `https://kopi-kita-kita.pages.dev`.
-5. Update **`site_url` / `display_url`** di `public/admin/config.yml` dan `site` di
-   `astro.config.mjs` dengan URL asli Anda.
-6. **Domain sendiri (nanti)**: Cloudflare Pages → Custom domains → ikuti instruksinya.
-7. **Setelah update `config.yml` atau `astro.config.mjs`**: push ke Git → Cloudflare Pages
-   build ulang otomatis → `/admin/` memakai konfigurasi baru.
+   - **Publish directory**: `dist`
+   - Node version diambil dari `engines` di `package.json`
+3. **Deploy site**, tunggu sampai hijau.
+4. Lanjutkan ke §7 (nyalakan Identity + Git Gateway + undang user) supaya `/admin/` bisa
+   dipakai.
 
-**Setelah konten diubah via CMS**: CMS commit ke Git → Cloudflare Pages auto-build →
-website publik ter-update **setelah build selesai** (biasanya <1 menit). Perubahan di
-repositori **tidak langsung terlihat** tanpa build/deploy.
+**Setelah konten diubah via CMS**: CMS commit ke Git → Netlify auto-build → website publik
+ter-update **setelah build selesai** (biasanya <1 menit). Perubahan di repositori
+**tidak langsung terlihat** tanpa build/deploy.
+
+### 8c. Troubleshooting
+
+**Build gagal: "Node.js vX is not supported by Astro"**
+
+Astro 7 butuh Node `>=22.23.4` (lihat `engines` di `package.json`). Kalau Netlify memakai
+versi lebih lama:
+
+1. Netlify → *Site configuration → Environment variables* → tambah:
+   `NODE_VERSION` = `24`
+2. *Deploys → Trigger deploy → Deploy site*.
+
+Secara lokal, cek dengan `node -v`; kalau kurang, upgrade Node atau pakai `nvm install 22`.
+
+**`/admin/` 404** — `public/admin/` belum ter-copy ke `dist/`. Jalankan `npm run build`
+lokal dan cek `dist/admin/` ada isinya. (Sudah diverifikasi ada.)
+
+**Login `/admin/` gagal / muter terus** — Identity atau Git Gateway belum dinyalakan,
+atau email Anda belum diundang. Ulangi §7 langkah 3–5.
 
 ---
 
