@@ -1,0 +1,132 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Kartu produk untuk katalog.
+ * Data diambil dari koleksi `menu` — sumber yang sama dengan halaman Menu,
+ * sehingga preview di Home selalu konsisten dengan katalog utuh.
+ */
+interface Props {
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  category?: string;
+  href?: string;
+  available?: boolean;
+}
+
+const {
+  name,
+  description,
+  price,
+  image,
+  category = '',
+  href,
+  available = true,
+} = Astro.props;
+
+const catLabel: Record<string, string> = {
+  coffee: 'Coffee',
+  'non-coffee': 'Non-Coffee',
+  food: 'Food',
+};
+---
+
+<article class="item">
+  <a class="frame r43" href={href} tabindex="-1" aria-hidden="true">
+    {
+      image ? (
+        <img src={image} alt="" loading="lazy" decoding="async" />
+      ) : (
+        <div class="ph">
+          <span class="ph-ic">
+            <Icon name="coffee" size={32} />
+          </span>
+          <span class="ph-cap">Foto belum tersedia</span>
+        </div>
+      )
+    }
+  </a>
+
+  <div class="row">
+    <div>
+      {category && <span class="cat">{catLabel[category] ?? category}</span>}
+      <h3>
+        {href ? <a href={href}>{name}</a> : name}
+        {!available && <span class="tag">Habis</span>}
+      </h3>
+    </div>
+    <span class="price">{price}</span>
+  </div>
+
+  <p>{description}</p>
+
+  {
+    href && (
+      <a class="btn ghost sm" href={href}>
+        Lihat detail
+        <Icon name="arrow" size={16} />
+      </a>
+    )
+  }
+</article>
+
+<style>
+  .item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .item .frame {
+    display: block;
+  }
+
+  .item .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    border-top: 1px solid var(--line-light);
+    padding-top: 12px;
+  }
+
+  .item h3 {
+    font-size: 1.5rem;
+  }
+
+  .item h3 a {
+    text-decoration: none;
+  }
+
+  .item h3 a:hover {
+    color: var(--caramel-deep);
+  }
+
+  .price {
+    font: 600 1rem/1 var(--font-body);
+    white-space: nowrap;
+    color: var(--caramel-deep);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cat {
+    font: 600 0.7rem/1 var(--font-body);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .item p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+
+  .item .btn {
+    align-self: flex-start;
+  }
+</style>

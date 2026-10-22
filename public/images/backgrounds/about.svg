@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Placeholder background">
+  <title>Placeholder background — ganti dengan foto asli</title>
+  <rect width="1200" height="900" fill="#5C3D2E" />
+  <rect width="1200" height="900" fill="#E8DCC8" opacity="0.08" />
+  <g opacity="0.14" stroke="#E8DCC8" stroke-width="1.5" fill="none">
+    <ellipse cx="600" cy="470" rx="160" ry="100" />
+    <path d="M760 470 a50 50 0 0 1 0 100" />
+    <path d="M440 470 a160 100 0 0 1 320 0 z" />
+  </g>
+  <text x="600" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#E8DCC8" opacity="0.6" letter-spacing="3">PLACEHOLDER</text>
+</svg>

@@ -1,0 +1,10 @@
+{
+  "name": "Nasi Goreng",
+  "category": "food",
+  "price": "Rp XX.XXX",
+  "description": "Nasi goreng dengan bahan lokal, disajikan hangat dan gurih.",
+  "image": "/images/menu/nasi-goreng.svg",
+  "featured": false,
+  "available": true,
+  "order": 8
+}

@@ -1,0 +1,35 @@
+{
+  "siteName": "Kopi Kita Kita",
+  "tagline": "Bebaskan Semuanya",
+  "logo": "",
+  "location": {
+    "address": "Alamat lengkap belum ditentukan",
+    "city": "Batam",
+    "mapLink": "",
+    "coordinates": null
+  },
+  "contact": {
+    "whatsapp": "+6280000000000",
+    "email": "hello@kopikitakita.example"
+  },
+  "social": {
+    "instagram": "",
+    "facebook": "",
+    "tiktok": ""
+  },
+  "hours": "Senin - Minggu, 08.00 - 22.00 WIB",
+  "backgrounds": {
+    "hero": "/images/backgrounds/hero.svg",
+    "about": "/images/backgrounds/about.svg",
+    "contact": "/images/backgrounds/contact.svg"
+  },
+  "hero": {
+    "headline": "Bebaskan Semuanya",
+    "subheadline": "Tempat untuk nongkrong, belajar, brainstorming, dan menikmati waktu sendiri."
+  },
+  "about": {
+    "title": "Tempat Berhenti, Tempat Mulai",
+    "summary": "Kopi Kita Kita adalah ruang baca, ngobrol, dan recharge di Batam. Kami percaya kopi enak tidak perlu suara keras — cukup Christi, cahaya hangat, dan waktu yang terasa panjang.",
+    "body": "Cerita lengkap brand, filosofi, dan nilai-nilai Kopi Kita Kita akan ditulis di sini oleh owner melalui dashboard konten. Bagian ini sengaja dibiarkan ringkas sampai detailnya benar-benar tersedia."
+  }
+}

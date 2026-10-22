@@ -1,0 +1,441 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import PhotoBg from '../components/PhotoBg.astro';
+import ProductCard from '../components/ProductCard.astro';
+import EventCard from '../components/EventCard.astro';
+import Icon from '../components/Icon.astro';
+import {
+  loadSettings,
+  getMenu,
+  getPublishedEvents,
+  getGallery,
+  splitEvents,
+} from '../lib/data';
+
+/**
+ * Beranda — etalase ringkas dari seluruh website.
+ *
+ * Setiap bagian hanya menampilkan cuplikan, dan datanya dibaca dari sumber
+ * yang sama dengan halaman lengkapnya (koleksi menu / events / gallery).
+ * Kalau sebuah koleksi kosong, bagiannya disembunyikan — bukan menampilkan
+ * data palsu.
+ */
+
+const settings = await loadSettings();
+
+// --- Preview menu: produk unggulan ---
+const featured = (await getMenu({ featuredOnly: true })).slice(0, 3);
+
+// --- Preview acara: yang mendatang & published ---
+const publishedEvents = await getPublishedEvents();
+const { upcoming, past } = splitEvents(publishedEvents);
+const eventPreview = [...upcoming, ...past].slice(0, 3);
+
+// --- Preview galeri ---
+const gallery = (await getGallery()).slice(0, 5);
+
+const heroBg = settings?.backgrounds?.hero ?? '';
+const aboutBg = settings?.backgrounds?.about ?? '';
+const heroHeadline = settings?.hero?.headline ?? 'Ruang untuk Malaysia yang Temurun Dalam Setiap Cangkir';
+const heroSub = settings?.hero?.subheadline ?? '';
+const aboutTitle = settings?.about?.title ?? '';
+const aboutSummary = settings?.about?.summary ?? '';
+
+const CITY = settings?.location?.city ?? 'Batam, Indonesia';
+---
+
+<PublicLayout
+  title={settings?.siteName ?? 'Kopi Kita Kita'}
+  description={`${settings?.siteName ?? 'Kopi Kita Kita'} — ${settings?.tagline ?? 'Bebaskan Semuanya'}. Coffee shop di ${CITY}.`}
+  current="/"
+>
+  <!-- ============ A. HERO ============ -->
+  <section class="hero">
+    <PhotoBg src={heroBg} alt="Suasana interior Kopi Kita Kita" label="Suasana Kopi Kita Kita" />
+    <div class="overlay-grad" aria-hidden="true"></div>
+
+    <div class="wrap hero-in">
+      <span class="hero-eyebrow">{settings?.siteName ?? 'Kopi Kita Kita'}</span>
+      <h1 class="script hero-title">Bebaskan<br />Semuanya</h1>
+      <p class="lead hero-lead">
+        {heroSub || 'Tempat untuk nongkrong, belajar, brainstorming, dan menikmati waktu sendiri.'}
+      </p>
+
+      <div class="btn-row">
+        <a class="btn" href="/menu/">
+          Jelajahi Menu
+          <Icon name="arrow" size={18} />
+        </a>
+        <a class="btn ghost" href="/tentang-kami/">Tentang Kami</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ B. ABOUT PREVIEW ============ -->
+  {
+    (aboutSummary || aboutBg) && (
+      <section class="about">
+        <div class="about-copy">
+          <h2>{aboutTitle || 'Tempat Berhenti, Tempat Mulai'}</h2>
+          <p class="lead">{aboutSummary}</p>
+          <a class="btn ghost" href="/tentang-kami/">
+            Kenali Kami
+            <Icon name="arrow" size={18} />
+          </a>
+        </div>
+
+        <div class="about-photo">
+          <PhotoBg src={aboutBg} alt="Interior Kopi Kita Kita" label="Interior Kopi Kita Kita" />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ C. FEATURED MENU PREVIEW ============ -->
+  {
+    featured.length > 0 && (
+      <section class="band photo-band">
+        <PhotoBg src={heroBg} alt="" label="Kopi" position="center right" />
+        <div class="overlay-grad" aria-hidden="true"></div>
+
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <span class="eyebrow">Menu Unggulan</span>
+              <h2>Kopi dan Rasa untuk Semua Cerita</h2>
+            </div>
+            <a class="btn" href="/menu/">
+              Lihat Semua Menu
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+
+          <div class="feat">
+            {featured.map((item) => (
+              <article>
+                <span class="cat">
+                  {item.data.category === 'coffee'
+                    ? 'Coffee'
+                    : item.data.category === 'non-coffee'
+                      ? 'Non-Coffee'
+                      : 'Food'}
+                </span>
+                <h3>
+                  <a href={`/menu/${item.id}/`}>{item.data.name}</a>
+                  <span class="price">{item.data.price}</span>
+                </h3>
+                <p>{item.data.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ D. UPCOMING EVENTS PREVIEW ============ -->
+  {
+    eventPreview.length > 0 && (
+      <section class="band cream">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <span class="eyebrow">Acara Terdekat</span>
+              <h2>Temukan Agenda Kopi Kita Kita</h2>
+            </div>
+            <a class="btn ghost" href="/acara/">
+              Jelajahi Semua Acara
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+
+          <div class="ev-list">
+            {eventPreview.map((ev) => (
+              <EventCard
+                title={ev.data.title}
+                description={ev.data.description}
+                date={ev.data.date}
+                time={ev.data.time}
+                image={ev.data.image}
+                location={ev.data.location}
+                href={`/acara/${ev.id}/`}
+                isPast={ev.data.date < new Date().toISOString().slice(0, 10)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ E. GALLERY PREVIEW ============ -->
+  {
+    gallery.length > 0 && (
+      <section class="band beige">
+        <div class="wrap">
+          <div class="head">
+            <div>
+              <span class="eyebrow">Galeri</span>
+              <h2>Suasana yang Terasa di Kopi Kita Kita</h2>
+            </div>
+            <a class="btn ghost" href="/galeri/">
+              Lihat Galeri
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+
+          <div class="gal-strip">
+            {gallery.map((g) => (
+              <a class="frame r34" href="/galeri/" aria-label={`Lihat galeri: ${g.data.alt}`}>
+                <img src={g.data.src} alt={g.data.alt} loading="lazy" decoding="async" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</PublicLayout>
+
+<style>
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    background: var(--roast);
+    color: var(--on-dark);
+    overflow: hidden;
+  }
+
+  .hero :global(.overlay-grad) {
+    background: linear-gradient(
+      90deg,
+      rgba(29, 22, 17, 0.94) 0%,
+      rgba(29, 22, 17, 0.8) 38%,
+      rgba(29, 22, 17, 0.35) 75%,
+      rgba(29, 22, 17, 0.15) 100%
+    );
+  }
+
+  .hero-in {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(64px, 10vw, 128px);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-brand);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #c9a17a;
+    margin-bottom: 22px;
+    display: block;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+  }
+
+  .hero-title {
+    font-size: clamp(2.8rem, 5.6vw, 4.6rem);
+    margin: 0 0 22px;
+    color: #fff;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-lead {
+    max-width: 34ch;
+    font-size: 1.15rem;
+    color: var(--on-dark);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+  }
+
+  /* ---------- ABOUT PREVIEW ---------- */
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    background: var(--taupe);
+    color: var(--roast);
+    min-height: 440px;
+  }
+
+  .about-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    justify-content: center;
+    padding: clamp(48px, 7vw, 96px) clamp(24px, 4vw, 56px) clamp(48px, 7vw, 96px)
+      max(20px, calc((100vw - 1200px) / 2 + 20px));
+  }
+
+  .about-copy .eyebrow {
+    color: #40382f;
+    margin: 0;
+  }
+
+  .about-copy .lead {
+    color: #2f2822;
+  }
+
+  .about-photo {
+    position: relative;
+    min-height: 320px;
+  }
+
+  .about-photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(90deg, rgba(165, 156, 139, 0.55), transparent 28%);
+    pointer-events: none;
+  }
+
+  @media (max-width: 820px) {
+    .about {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .about-copy {
+      padding: 48px max(20px, env(safe-area-inset-left, 0px));
+    }
+
+    .about-photo {
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+    }
+  }
+
+  /* ---------- FEATURED MENU (band foto gelap) ---------- */
+  .photo-band {
+    position: relative;
+    overflow: hidden;
+    background: var(--roast);
+    color: var(--on-dark);
+  }
+
+  .photo-band :global(.overlay-grad) {
+    background: linear-gradient(
+      90deg,
+      rgba(29, 22, 17, 0.95) 0%,
+      rgba(29, 22, 17, 0.78) 45%,
+      rgba(29, 22, 17, 0.42) 100%
+    );
+  }
+
+  .photo-band .wrap {
+    position: relative;
+    z-index: 2;
+  }
+
+  .photo-band .head {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .photo-band .eyebrow {
+    color: var(--on-dark-soft);
+  }
+
+  .feat {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line-dark);
+    margin-top: clamp(28px, 5vw, 64px);
+  }
+
+  .feat article {
+    padding: 26px 26px 30px 0;
+    border-right: 1px solid var(--line-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .feat article + article {
+    padding-left: 26px;
+  }
+
+  .feat article:last-child {
+    border-right: 0;
+  }
+
+  .feat .cat {
+    font: 600 0.7rem/1 var(--font-body);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--on-dark-soft);
+  }
+
+  .feat h3 {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .feat h3 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .feat h3 a:hover {
+    color: var(--caramel-light);
+  }
+
+  .feat .price {
+    font: 600 1.05rem/1 var(--font-body);
+    color: var(--caramel-light);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .feat p {
+    color: var(--on-dark-soft);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 820px) {
+    .feat {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .feat article,
+    .feat article + article {
+      padding: 24px 0;
+      border-right: 0;
+      border-bottom: 1px solid var(--line-dark);
+    }
+  }
+
+  /* ---------- GALERI STRIP ---------- */
+  .gal-strip {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .gal-strip .frame {
+    aspect-ratio: 3 / 4;
+    display: block;
+  }
+
+  .gal-strip .frame:nth-child(even) {
+    margin-top: 28px;
+  }
+
+  @media (max-width: 820px) {
+    .gal-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gal-strip .frame:nth-child(n + 5) {
+      display: none;
+    }
+
+    .gal-strip .frame:nth-child(even) {
+      margin-top: 0;
+    }
+  }
+</style>

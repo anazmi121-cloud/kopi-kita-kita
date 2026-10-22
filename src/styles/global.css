@@ -1,0 +1,473 @@
+/* ============================================================
+   Kopi Kita Kita — Design System
+   Minimalis editorial: band roast / cream / beige / taupe,
+   aksen caramel, garis pembatas tipis, layout asimetris.
+   ============================================================ */
+
+:root {
+  /* Warna */
+  --roast: #1d1611;
+  --roast-2: #2b1f17;
+  --cream: #f4ecdf;
+  --beige: #e7dbc7;
+  --taupe: #a59c8b;
+  --ink: #2a211b;
+  --ink-soft: #5d5146;
+  --on-dark: #f4ecdf;
+  --on-dark-soft: #c9bba7;
+  --caramel: #a8764a;
+  --caramel-deep: #8a5c36;
+  --caramel-light: #e0b88f;
+
+  /* Garis pembatas tipis */
+  --line-light: rgba(42, 33, 27, 0.22);
+  --line-dark: rgba(244, 236, 223, 0.22);
+
+  /* Tipografi */
+  --font-head: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: "Mr Dafoe", "Brush Script MT", cursive;
+  /* Wordmark brand — serif klasik, terasa premium */
+  --font-brand: "Cinzel", Georgia, "Times New Roman", serif;
+
+  /* Ritme */
+  --wrap: 1200px;
+  --pad-x: max(20px, env(safe-area-inset-left, 0px));
+  --band: clamp(56px, 8vw, 104px);
+  --r-sm: 4px;
+  --r-md: 10px;
+  --r-pill: 999px;
+
+  color-scheme: light;
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--caramel);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.dark :focus-visible,
+.taupe :focus-visible,
+.nav :focus-visible {
+  outline-color: var(--caramel-light);
+}
+
+/* ---------- Tipografi ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  line-height: 1.04;
+  margin: 0;
+  text-wrap: balance;
+  letter-spacing: 0.005em;
+}
+
+h1 {
+  font-size: clamp(2.6rem, 6.4vw, 4.6rem);
+}
+h2 {
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+}
+h3 {
+  font-size: 1.4rem;
+  line-height: 1.15;
+}
+
+p {
+  margin: 0;
+  max-width: 62ch;
+}
+
+.eyebrow {
+  font: 600 0.78rem/1 var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: block;
+  margin: 0 0 18px;
+}
+
+.dark .eyebrow {
+  color: var(--on-dark-soft);
+}
+.taupe .eyebrow {
+  color: #40382f;
+}
+
+.lead {
+  font-size: 1.08rem;
+  color: var(--ink-soft);
+}
+.dark .lead {
+  color: var(--on-dark-soft);
+}
+.taupe .lead {
+  color: #352e27;
+}
+
+/* Heading script — gaya "Bebaskan Semuanya" / "MENU KAMI" */
+.script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+/* ---------- Tombol ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 0.92rem/1 var(--font-body);
+  letter-spacing: 0.02em;
+  padding: 15px 24px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  background: var(--caramel);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn:hover {
+  background: var(--caramel-deep);
+  color: #fff;
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.btn.ghost:hover {
+  background: rgba(244, 236, 223, 0.1);
+}
+
+.cream .btn.ghost:hover,
+.beige .btn.ghost:hover,
+.taupe .btn.ghost:hover {
+  background: rgba(42, 33, 27, 0.07);
+}
+
+.btn.sm {
+  padding: 11px 18px;
+  font-size: 0.85rem;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+  transition: color 0.2s;
+}
+
+.textlink:hover {
+  color: var(--caramel);
+}
+
+.tag {
+  display: inline-block;
+  font: 600 0.68rem/1 var(--font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  padding: 5px 8px;
+  border-radius: 2px;
+  margin-left: 8px;
+  vertical-align: middle;
+  color: var(--ink-soft);
+}
+
+/* ---------- Layout ---------- */
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+}
+
+.band {
+  padding-block: var(--band);
+}
+
+.dark {
+  background: var(--roast);
+  color: var(--on-dark);
+}
+.cream {
+  background: var(--cream);
+}
+.beige {
+  background: var(--beige);
+}
+.taupe {
+  background: var(--taupe);
+  color: var(--roast);
+}
+
+/* Kepala seksi */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(28px, 4vw, 48px);
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line-light);
+}
+
+.dark .head {
+  border-bottom-color: var(--line-dark);
+}
+
+.head h2 {
+  max-width: 16ch;
+}
+
+.head .lead {
+  max-width: 46ch;
+}
+
+/* Kolom asimetris */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+
+.split.flip {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+}
+
+.split .copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* ---------- Frame foto ---------- */
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--roast-2);
+}
+
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.r43 {
+  aspect-ratio: 4 / 3;
+}
+.r11 {
+  aspect-ratio: 1 / 1;
+}
+.r45 {
+  aspect-ratio: 4 / 5;
+}
+.r169 {
+  aspect-ratio: 16 / 9;
+}
+.r32 {
+  aspect-ratio: 3 / 2;
+}
+.r34 {
+  aspect-ratio: 3 / 4;
+}
+
+/* Placeholder foto — dipakai saat file gambar belum tersedia */
+.ph {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(244, 236, 223, 0.55);
+  background: linear-gradient(150deg, #4a3123, #1f1510);
+}
+
+.ph::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 78% 8%, rgba(255, 226, 180, 0.28), transparent 55%);
+}
+
+.ph-cap {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font: 500 0.68rem/1 var(--font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  z-index: 1;
+  color: rgba(244, 236, 223, 0.7);
+}
+
+.ph-ic {
+  z-index: 1;
+}
+
+/* Latar foto */
+.photo-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.photo-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay-grad {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ---------- Grid produk ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 34px 26px;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- Empty state ---------- */
+.empty {
+  padding: 64px 0;
+  text-align: left;
+  border-top: 1px solid var(--line-light);
+  max-width: 46ch;
+}
+
+.empty h3 {
+  font-size: 1.9rem;
+  margin-bottom: 8px;
+}
+
+.empty p {
+  color: var(--ink-soft);
+  margin-bottom: 18px;
+}
+
+/* ---------- Aksesibilitas ---------- */
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 200;
+  background: var(--caramel);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---------- Gerak halus ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

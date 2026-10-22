@@ -1,0 +1,11 @@
+{
+  "title": "Coffee Workshop",
+  "description": "Belajar menyeduh kopi manual bersama barista kami.",
+  "date": "2026-11-08",
+  "time": "14.00 WIB",
+  "image": "/images/events/workshop.svg",
+  "location": "Kopi Kita Kita",
+  "externalLink": "",
+  "published": true,
+  "order": 2
+}

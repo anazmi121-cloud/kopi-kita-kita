@@ -1,0 +1,10 @@
+{
+  "name": "Cokelat Panas",
+  "category": "non-coffee",
+  "price": "Rp XX.XXX",
+  "description": "Cokelat pekat yang rich, diseduh dengan susu steamed dan tanpa kafein tambahan.",
+  "image": "/images/menu/cokelat.svg",
+  "featured": false,
+  "available": true,
+  "order": 5
+}

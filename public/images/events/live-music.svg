@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" preserveAspectRatio="xMidYMid slice" role="img" aria-label="LIVE MUSIC">
+  <title>LIVE MUSIC</title>
+  <rect width="1200" height="700" fill="#2B1D14" />
+  <g opacity="0.18" stroke="#E8DCC8" stroke-width="2" fill="none">
+    <rect x="80" y="100" width="240" height="180" rx="6" /><path d="M140 70 v60 M260 70 v60 M80 160 h240" />
+  </g>
+  <text x="600" y="360" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#E8DCC8" opacity="0.75" letter-spacing="2">LIVE MUSIC</text>
+</svg>

@@ -1,0 +1,98 @@
+---
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { getEntry } from 'astro:content';
+import '../styles/global.css';
+
+/**
+ * Layout untuk seluruh halaman publik.
+ * Membaca settings (site.json) sekali di sini, lalu meneruskannya ke
+ * Navbar dan Footer supaya data konsisten di semua halaman.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  current: string;
+  /** Foto latar untuk hero halaman ini (opsional). */
+  background?: string;
+  /** Sembunyikan blok lokasi di footer untuk halaman tertentu (opsional). */
+  hideLocation?: boolean;
+}
+
+const { title, description, current, background, hideLocation = false } = Astro.props;
+
+const settingsEntry = await getEntry('settings', 'site');
+const settings = settingsEntry?.data;
+
+const siteName = settings?.siteName ?? 'Kopi Kita Kita';
+const tagline = settings?.tagline ?? 'Bebaskan Semuanya';
+const logo = settings?.logo ?? '';
+const pageTitle = title === siteName ? title : `${title} — ${siteName}`;
+const pageDescription =
+  description ?? `${siteName}. ${tagline}. Coffee shop di Batam, Indonesia.`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="id_ID" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=Cinzel:wght@500;600;700&family=Mr+Dafoe&display=swap"
+    />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Lompat ke konten utama</a>
+
+    <Navbar current={current} logo={logo} />
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <Footer
+      logo={logo}
+      siteName={siteName}
+      tagline={tagline}
+      city={settings?.location?.city ?? 'Batam, Indonesia'}
+      address={settings?.location?.address ?? ''}
+      hours={settings?.hours ?? ''}
+      whatsapp={settings?.contact?.whatsapp ?? ''}
+      email={settings?.contact?.email ?? ''}
+      instagram={settings?.social?.instagram ?? ''}
+      facebook={settings?.social?.facebook ?? ''}
+      tiktok={settings?.social?.tiktok ?? ''}
+      mapLink={settings?.location?.mapLink ?? ''}
+      background={settings?.backgrounds?.contact ?? ''}
+      hideLocation={hideLocation}
+    />
+
+  </body>
+</html>
+
+<style>
+  main {
+    display: block;
+    min-height: 50vh;
+  }
+
+  main:focus {
+    outline: none;
+  }
+</style>

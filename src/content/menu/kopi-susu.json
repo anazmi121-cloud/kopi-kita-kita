@@ -1,0 +1,10 @@
+{
+  "name": "Kopi Susu",
+  "category": "coffee",
+  "price": "Rp XX.XXX",
+  "description": "Espresso tunggal dipadukan susu segar, manis alami, dan buih tipis di atas cangkir.",
+  "image": "/images/menu/kopi-susu.svg",
+  "featured": true,
+  "available": true,
+  "order": 2
+}

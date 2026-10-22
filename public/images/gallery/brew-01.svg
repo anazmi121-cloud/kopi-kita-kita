@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="BREWING">
+  <title>BREWING</title>
+  <rect width="900" height="1200" fill="#5C3D2E" />
+  <g opacity="0.18" stroke="#F5EFE6" stroke-width="2" fill="none">
+    <ellipse cx="200" cy="120" rx="70" ry="45" /><path d="M270 120 a28 28 0 0 1 0 56" /><path d="M130 120 a70 45 0 0 1 140 0 z" />
+  </g>
+  <text x="450" y="610" text-anchor="middle" font-family="Georgia, serif" font-size="75" fill="#F5EFE6" opacity="0.75" letter-spacing="2">BREWING</text>
+</svg>

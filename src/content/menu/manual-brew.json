@@ -1,0 +1,10 @@
+{
+  "name": "Manual Brew",
+  "category": "coffee",
+  "price": "Rp XX.XXX",
+  "description": "Diseduh manual dengan air bergelombang rendah, karakter biji yang jernih dan ringan.",
+  "image": "/images/menu/manual-brew.svg",
+  "featured": true,
+  "available": true,
+  "order": 3
+}

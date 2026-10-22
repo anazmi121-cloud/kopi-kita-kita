@@ -1,0 +1,11 @@
+{
+  "title": "Live Music Night",
+  "description": "Sesi musik santai untuk menemani kopi favorit Anda.",
+  "date": "2026-10-25",
+  "time": "19.00 WIB",
+  "image": "/images/events/live-music.svg",
+  "location": "Kopi Kita Kita",
+  "externalLink": "",
+  "published": true,
+  "order": 1
+}

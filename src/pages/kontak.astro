@@ -1,0 +1,365 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import PhotoBg from '../components/PhotoBg.astro';
+import Icon from '../components/Icon.astro';
+import { loadSettings } from '../lib/data';
+
+/**
+ * Halaman Kontak — alamat, jam operasional, WhatsApp, email, sosial, peta.
+ * Semua data berasal dari settings (site.json) sehingga bisa diperbarui dari CMS.
+ */
+const settings = await loadSettings();
+
+const city = settings?.location?.city ?? 'Batam, Indonesia';
+const address = settings?.location?.address ?? '';
+const hours = settings?.hours ?? '';
+const whatsapp = settings?.contact?.whatsapp ?? '';
+const email = settings?.contact?.email ?? '';
+const instagram = settings?.social?.instagram ?? '';
+const facebook = settings?.social?.facebook ?? '';
+const tiktok = settings?.social?.tiktok ?? '';
+const mapLink = settings?.location?.mapLink ?? '';
+const coordinates = settings?.location?.coordinates ?? null;
+const contactBg = settings?.backgrounds?.contact ?? '';
+
+const waNumber = whatsapp.replace(/[^\d]/g, '');
+const waHref = waNumber ? `https://wa.me/${waNumber}` : '';
+const mapsUrl =
+  mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`Kopi Kita Kita ${city}`)}`;
+
+const socials = [
+  { href: instagram, icon: 'instagram' as const, label: 'Instagram' },
+  { href: facebook, icon: 'chat' as const, label: 'Facebook' },
+  { href: tiktok, icon: 'music' as const, label: 'TikTok' },
+].filter((s) => Boolean(s.href));
+
+// Embed Google Maps hanya dibuat bila koordinat asli sudah diisi.
+const embedSrc = coordinates
+  ? `https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&z=15&output=embed`
+  : '';
+---
+
+<PublicLayout
+  title="Kontak"
+  description={`Alamat, jam operasional, dan cara menghubungi Kopi Kita Kita di ${city}.`}
+  current="/kontak/"
+>
+  <section class="page-hero dark has-photo">
+    <PhotoBg src={contactBg} alt="" label="Lokasi Kopi Kita Kita" />
+    <div class="overlay-grad" aria-hidden="true"></div>
+    <div class="wrap">
+      <span class="eyebrow">Kontak</span>
+      <h1>Mari Terhubung</h1>
+      <p>
+        Punya pertanyaan, mau reserved, atau sekadar ingin mampir? Semua cara untuk
+        menghubungi kami ada di halaman ini.
+      </p>
+    </div>
+  </section>
+
+  <section class="band cream">
+    <div class="wrap">
+      <div class="contact">
+        <!-- ===== Informasi ===== -->
+        <div class="info-col">
+          <span class="eyebrow">Detail</span>
+          <h2>Informasi Kopi Kita Kita</h2>
+
+          <ul class="info">
+            <li>
+              <Icon name="pin" size={20} />
+              <div>
+                <span class="k">Alamat</span>
+                <span class="v">
+                  {address || 'Alamat lengkap menyusul'}
+                  <br />
+                  {city}
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <Icon name="clock" size={20} />
+              <div>
+                <span class="k">Jam Operasional</span>
+                <span class="v">{hours || 'Jam operasional menyusul'}</span>
+              </div>
+            </li>
+
+            <li>
+              <Icon name="chat" size={20} />
+              <div>
+                <span class="k">WhatsApp</span>
+                <span class="v">
+                  {
+                    whatsapp && waHref ? (
+                      <a href={waHref} target="_blank" rel="noopener noreferrer">
+                        {whatsapp}
+                      </a>
+                    ) : (
+                      'Nomor WhatsApp menyusul'
+                    )
+                  }
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <Icon name="mail" size={20} />
+              <div>
+                <span class="k">Email</span>
+                <span class="v">
+                  {
+                    email ? (
+                      <a href={`mailto:${email}`}>{email}</a>
+                    ) : (
+                      'Email menyusul'
+                    )
+                  }
+                </span>
+              </div>
+            </li>
+
+            <li>
+              <Icon name="instagram" size={20} />
+              <div>
+                <span class="k">Media Sosial</span>
+                <span class="v">
+                  {
+                    socials.length > 0 ? (
+                      <span class="soc-row">
+                        {socials.map((s) => (
+                          <a
+                            href={s.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={s.label}
+                          >
+                            <Icon name={s.icon} size={17} />
+                          </a>
+                        ))}
+                      </span>
+                    ) : (
+                      'Akun media sosial menyusul'
+                    )
+                  }
+                </span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="btn-row">
+            {
+              waHref && (
+                <a class="btn" href={waHref} target="_blank" rel="noopener noreferrer">
+                  Chat via WhatsApp
+                  <Icon name="external" size={17} />
+                </a>
+              )
+            }
+            <a
+              class="btn ghost"
+              target="_blank"
+              rel="noopener noreferrer"
+              href={mapsUrl}
+            >
+              Lihat di Google Maps
+              <Icon name="external" size={17} />
+            </a>
+          </div>
+        </div>
+
+        <!-- ===== Peta ===== -->
+        <div class="map-col">
+          {
+            embedSrc ? (
+              <div class="map-frame">
+                <iframe
+                  src={embedSrc}
+                  title="Lokasi Kopi Kita Kita di peta"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                />
+              </div>
+            ) : (
+              <>
+                <svg
+                  class="map"
+                  viewBox="0 0 520 340"
+                  role="img"
+                  aria-label="Ilustrasi wilayah Batam dengan penanda lokasi Kopi Kita Kita"
+                >
+                  <g
+                    fill="none"
+                    stroke="#2a211b"
+                    stroke-width="1.4"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                  >
+                    <path d="M70 210c20-30 60-34 92-52 24-14 46-44 86-40 30 3 40 24 70 22 28-2 46-18 78-14 30 4 48 30 40 56-8 28-38 30-60 44-26 16-34 46-72 50-34 4-52-22-84-22-30 0-52 20-82 10-26-8-86-20-68-54Z" />
+                    <path d="M96 214c18-20 52-26 82-42 22-12 44-36 76-32 26 3 38 20 64 18 24-2 42-14 68-10" opacity=".55" />
+                    <path d="M120 236c26-10 50-6 80-18 24-10 40-26 70-24 22 1 36 12 60 10" opacity=".4" />
+                    <path d="M392 250c14-6 30-2 40 8 8 8 4 22-8 26-14 4-34-6-38-18-2-6 0-12 6-16Z" />
+                    <path d="M40 120c10-8 26-8 34 2 6 8 0 18-10 20-12 2-28-8-24-22Z" />
+                    <path d="M410 70c12-6 28-2 34 8 4 8-4 16-14 16-12 0-26-10-20-24Z" />
+                  </g>
+                  <g transform="translate(262 150)">
+                    <circle r="22" fill="#a8764a" opacity=".25" />
+                    <path d="M0 -26c-10 0-18 8-18 18 0 14 18 30 18 30s18-16 18-30c0-10-8-18-18-18Z" fill="#a8764a" stroke="#2a211b" stroke-width="1.4" />
+                    <circle cy="-8" r="6" fill="#f4ecdf" />
+                  </g>
+                  <text x="300" y="196" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-size="30" font-weight="600" fill="#2a211b" letter-spacing="1">Batam</text>
+                </svg>
+                <div class="map-note">
+                  Ilustrasi wilayah, bukan titik lokasi presisi. Koordinat asli menyusul.
+                </div>
+              </>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</PublicLayout>
+
+<style>
+  .page-hero.has-photo {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-hero.has-photo :global(.overlay-grad) {
+    background: linear-gradient(90deg, rgba(29, 22, 17, 0.92), rgba(29, 22, 17, 0.45));
+  }
+
+  .page-hero .wrap {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+
+  .page-hero h1 {
+    max-width: 12ch;
+  }
+
+  .page-hero p {
+    margin-top: 20px;
+    max-width: 46ch;
+    color: var(--on-dark-soft);
+    font-size: 1.1rem;
+  }
+
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .info-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .info-col .eyebrow {
+    margin: 0;
+  }
+
+  .info {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .info li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line-light);
+    align-items: start;
+  }
+
+  .info li:first-child {
+    border-top: 1px solid var(--line-light);
+  }
+
+  .info li :global(svg) {
+    margin-top: 4px;
+    color: var(--caramel-deep);
+  }
+
+  .info .k {
+    font: 600 0.72rem/1 var(--font-body);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .info .v {
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  .soc-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .soc-row a {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .soc-row a:hover {
+    border-color: var(--caramel);
+    background: rgba(42, 33, 27, 0.06);
+  }
+
+  .map {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .map-note {
+    font-size: 0.76rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .map-frame {
+    border: 1px solid var(--line-light);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--beige);
+  }
+
+  .map-frame iframe {
+    display: block;
+    width: 100%;
+    height: 420px;
+    border: 0;
+  }
+
+  @media (max-width: 820px) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import EventCard from '../../components/EventCard.astro';
+import Icon from '../../components/Icon.astro';
+import { getPublishedEvents, splitEvents } from '../../lib/data';
+
+/**
+ * Halaman Acara — agenda kegiatan.
+ * Hanya acara berstatus published yang tampil. Draft tidak pernah dipublikasikan.
+ */
+const events = await getPublishedEvents();
+const { upcoming, past } = splitEvents(events);
+---
+
+<PublicLayout
+  title="Acara"
+  description="Agenda kegiatan Kopi Kita Kita: live music, workshop kopi, gathering komunitas, dan acara spesial."
+  current="/acara/"
+>
+  <section class="page-hero dark">
+    <div class="wrap">
+      <span class="eyebrow">Agenda</span>
+      <h1>Acara Kopi Kita Kita</h1>
+      <p>
+        Live musik, workshop kopi, gathering komunitas, pameran, dan acara spesial
+        lainnya. Semua terbuka untuk Anda.
+      </p>
+    </div>
+  </section>
+
+  <section class="band cream">
+    <div class="wrap">
+      <!-- ===== Acara mendatang ===== -->
+      <div class="head">
+        <div>
+          <span class="eyebrow">Akan datang</span>
+          <h2>Jadwal Terdekat</h2>
+        </div>
+      </div>
+
+      {
+        upcoming.length > 0 ? (
+          <div class="ev-list">
+            {upcoming.map((ev) => (
+              <EventCard
+                title={ev.data.title}
+                description={ev.data.description}
+                date={ev.data.date}
+                time={ev.data.time}
+                image={ev.data.image}
+                location={ev.data.location}
+                href={`/acara/${ev.id}/`}
+                large
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="empty">
+            <h3>Belum ada acara terjadwal</h3>
+            <p>
+              Saat ini belum ada acara yang dipublikasikan. Ikuti akun media sosial
+              kami untuk informasi terbaru.
+            </p>
+            <a class="btn ghost" href="/kontak/">
+              Hubungi Kami
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+        )
+      }
+
+      <!-- ===== Acara yang sudah lewat ===== -->
+      {
+        past.length > 0 && (
+          <>
+            <div class="head head-past">
+              <div>
+                <span class="eyebrow">Telah berlalu</span>
+                <h2>Arsip Acara</h2>
+              </div>
+            </div>
+
+            <div class="ev-list">
+              {past.map((ev) => (
+                <EventCard
+                  title={ev.data.title}
+                  description={ev.data.description}
+                  date={ev.data.date}
+                  time={ev.data.time}
+                  image={ev.data.image}
+                  location={ev.data.location}
+                  href={`/acara/${ev.id}/`}
+                  isPast
+                />
+              ))}
+            </div>
+          </>
+        )
+      }
+    </div>
+  </section>
+</PublicLayout>
+
+<style>
+  .page-hero {
+    background: var(--roast);
+    color: var(--on-dark);
+  }
+
+  .page-hero .wrap {
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+
+  .page-hero h1 {
+    max-width: 12ch;
+  }
+
+  .page-hero p {
+    margin-top: 20px;
+    max-width: 46ch;
+    color: var(--on-dark-soft);
+    font-size: 1.1rem;
+  }
+
+  .head-past {
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+</style>

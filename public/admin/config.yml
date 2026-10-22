@@ -1,0 +1,177 @@
+# ============================================================
+# Decap CMS — konfigurasi dashboard admin Kopi Kita Kita
+# ============================================================
+# Backend: GitHub (OAuth lewat Git Gateway / Decap OAuth server)
+# Penyimpanan: file JSON di repository Git — BUKAN database.
+#
+# Setelah CMS menulis file, website publik baru menampilkan perubahan
+# setelah proses build/deployment Cloudflare Pages selesai.
+# ============================================================
+
+backend:
+  name: github
+  repo: anazm/kopi-kita-kita # <-- GANTI: username/nama-repo GitHub Anda
+  branch: main
+  # base_url diisi bila memakai Decap OAuth Server (self-hosted),
+  # contoh: https://oauth.example.com
+  # base_url: https://oauth.example.com
+
+publish_mode: editorial_workflow
+
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# Editor bawaan Decap (React). Repo ini tidak memakai framework UI,
+# jadi editor bawaan dipakai apa adanya.
+editor:
+  preview: false
+
+site_url: https://kopi-kita-kita.pages.dev
+display_url: https://kopi-kita-kita.pages.dev
+
+locale: id
+
+collections:
+  # ---------- Menu (katalog produk) ----------
+  - name: 'menu'
+    label: 'Menu'
+    label_singular: 'Produk'
+    folder: 'src/content/menu'
+    create: true
+    slug: '{{slug}}'
+    extension: 'json'
+    format: 'json'
+    sortable_fields: ['order', 'name']
+    summary: '{{name}} — {{category}} — {{price}}'
+    fields:
+      - { name: 'name', label: 'Nama Produk', widget: 'string' }
+      - name: 'category'
+        label: 'Kategori'
+        widget: 'select'
+        options:
+          - { label: 'Coffee', value: 'coffee' }
+          - { label: 'Non-Coffee', value: 'non-coffee' }
+          - { label: 'Food', value: 'food' }
+      - { name: 'price', label: 'Harga', widget: 'string', hint: 'Contoh: Rp 28.000' }
+      - name: 'description'
+        label: 'Deskripsi Singkat'
+        widget: 'text'
+        hint: 'Tampil di kartu katalog dan preview Home.'
+      - name: 'details'
+        label: 'Deskripsi Lengkap'
+        widget: 'text'
+        required: false
+        hint: 'Opsional. Tampil di halaman detail produk.'
+      - { name: 'image', label: 'Foto Produk', widget: 'image', required: false }
+      - { name: 'featured', label: 'Tampilkan di Menu Unggulan (Home)', widget: 'boolean', default: false }
+      - { name: 'available', label: 'Tersedia', widget: 'boolean', default: true }
+      - { name: 'order', label: 'Urutan', widget: 'number', default: 0, value_type: 'int' }
+
+  # ---------- Acara ----------
+  - name: 'events'
+    label: 'Acara'
+    label_singular: 'Acara'
+    folder: 'src/content/events'
+    create: true
+    slug: '{{slug}}'
+    extension: 'json'
+    format: 'json'
+    sortable_fields: ['date', 'title']
+    summary: '{{title}} — {{date}} — {{published}}'
+    fields:
+      - { name: 'title', label: 'Judul Acara', widget: 'string' }
+      - { name: 'description', label: 'Deskripsi', widget: 'text' }
+      - { name: 'date', label: 'Tanggal', widget: 'datetime', date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
+      - { name: 'time', label: 'Waktu', widget: 'string', required: false, hint: 'Contoh: 19.00 WIB' }
+      - { name: 'image', label: 'Foto Acara', widget: 'image', required: false }
+      - { name: 'location', label: 'Lokasi', widget: 'string', required: false }
+      - { name: 'externalLink', label: 'Link External', widget: 'string', required: false, hint: 'Contoh: https://instagram.com/... (boleh dikosongkan)' }
+      - name: 'published'
+        label: 'Published (tampilkan di website)'
+        widget: 'boolean'
+        default: false
+        hint: 'Tidak dicentang = Draft. Acara berstatus draft tidak akan muncul di website publik.'
+
+  # ---------- Galeri ----------
+  - name: 'gallery'
+    label: 'Galeri'
+    label_singular: 'Foto'
+    folder: 'src/content/gallery'
+    create: true
+    slug: '{{slug}}'
+    extension: 'json'
+    format: 'json'
+    sortable_fields: ['order']
+    summary: '{{caption}} — {{alt}}'
+    fields:
+      - { name: 'src', label: 'File Foto', widget: 'image' }
+      - { name: 'alt', label: 'Alt Text', widget: 'string', hint: 'Deskripsi singkat isi foto untuk pembaca layar.' }
+      - { name: 'caption', label: 'Caption', widget: 'string', required: false, hint: 'Contoh: Interior, Produk, Suasana, Acara, Kopi' }
+      - { name: 'order', label: 'Urutan', widget: 'number', default: 0, value_type: 'int' }
+
+  # ---------- Pengaturan situs (nama, tagline, logo, kontak, background) ----------
+  - name: 'settings'
+    label: 'Pengaturan Situs'
+    files:
+      - name: 'site'
+        label: 'Umum'
+        file: 'src/content/settings/site.json'
+        fields:
+          - { name: 'siteName', label: 'Nama Brand', widget: 'string' }
+          - { name: 'tagline', label: 'Tagline', widget: 'string' }
+          - name: 'logo'
+            label: 'Logo'
+            widget: 'image'
+            required: false
+            hint: 'Kosongkan untuk memakai logo bawaan (SVG teks). File logo dibaca otomatis dari folder /images/logo/.'
+          - name: 'hero'
+            label: 'Konten Hero'
+            widget: 'object'
+            fields:
+              - { name: 'headline', label: 'Headline', widget: 'string' }
+              - { name: 'subheadline', label: 'Sub-headline', widget: 'string', required: false }
+          - name: 'about'
+            label: 'Konten Tentang Kami'
+            widget: 'object'
+            fields:
+              - { name: 'title', label: 'Judul', widget: 'string' }
+              - { name: 'summary', label: 'Ringkasan', widget: 'text' }
+              - { name: 'body', label: 'Cerita Lengkap', widget: 'text', required: false }
+          - name: 'backgrounds'
+            label: 'Foto Latar (Background)'
+            widget: 'object'
+            hint: 'Pilih file foto untuk tiap section. Foto ini dipakai sebagai latar hero, about, dan kontak.'
+            fields:
+              - { name: 'hero', label: 'Latar Hero (Beranda)', widget: 'image' }
+              - { name: 'about', label: 'Latar Tentang Kami', widget: 'image', required: false }
+              - { name: 'contact', label: 'Latar Kontak', widget: 'image', required: false }
+          - name: 'location'
+            label: 'Lokasi'
+            widget: 'object'
+            fields:
+              - { name: 'address', label: 'Alamat', widget: 'string' }
+              - { name: 'city', label: 'Kota', widget: 'string' }
+              - { name: 'mapLink', label: 'Link Google Maps', widget: 'string', required: false, hint: 'Contoh: https://maps.app.goo.gl/...' }
+              - name: 'coordinates'
+                label: 'Koordinat (opsional)'
+                widget: 'object'
+                required: false
+                hint: 'Kalau diisi, halaman Kontak menampilkan peta Google Maps yang tertanam.'
+                fields:
+                  - { name: 'lat', label: 'Latitude', widget: 'number', value_type: 'float' }
+                  - { name: 'lng', label: 'Longitude', widget: 'number', value_type: 'float' }
+          - name: 'contact'
+            label: 'Kontak'
+            widget: 'object'
+            fields:
+              - { name: 'whatsapp', label: 'Nomor WhatsApp', widget: 'string', hint: 'Format internasional, contoh: 6281234567890' }
+              - { name: 'email', label: 'Email', widget: 'string' }
+          - name: 'social'
+            label: 'Media Sosial'
+            widget: 'object'
+            required: false
+            fields:
+              - { name: 'instagram', label: 'Instagram', widget: 'string', required: false }
+              - { name: 'facebook', label: 'Facebook', widget: 'string', required: false }
+              - { name: 'tiktok', label: 'TikTok', widget: 'string', required: false }
+          - { name: 'hours', label: 'Jam Operasional', widget: 'string' }

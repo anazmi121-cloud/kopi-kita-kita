@@ -1,0 +1,10 @@
+{
+  "name": "Teh Lemon",
+  "category": "non-coffee",
+  "price": "Rp XX.XXX",
+  "description": "Teh hitam pilihan dengan irisan lemon segar, menyegarkan untuk menemani siang yang panjang.",
+  "image": "/images/menu/teh.svg",
+  "featured": false,
+  "available": true,
+  "order": 6
+}

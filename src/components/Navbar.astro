@@ -1,0 +1,201 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+
+/**
+ * Navbar publik — dipakai di seluruh halaman.
+ * `current` menentukan active state (harus sama persis dengan href).
+ */
+interface Props {
+  current: string;
+  logo?: string;
+}
+
+const { current, logo } = Astro.props;
+
+const NAV = [
+  { href: '/', label: 'Beranda' },
+  { href: '/tentang-kami/', label: 'Tentang Kami' },
+  { href: '/menu/', label: 'Menu' },
+  { href: '/acara/', label: 'Acara' },
+  { href: '/galeri/', label: 'Galeri' },
+  { href: '/kontak/', label: 'Kontak' },
+];
+---
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="/" aria-label="Kopi Kita Kita, ke Beranda">
+      <Logo src={logo} height={46} />
+    </a>
+
+    <button
+      class="burger"
+      id="nav-burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="navlist"
+      aria-label="Buka menu navigasi"
+    >
+      <Icon name="menu" size={22} />
+    </button>
+
+    <nav aria-label="Navigasi utama">
+      <ul id="navlist">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={current === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--roast);
+    color: var(--on-dark);
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .nav-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 72px;
+  }
+
+  .brand {
+    display: block;
+    color: var(--on-dark);
+    line-height: 0;
+    flex: none;
+  }
+
+  .nav ul {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav ul a {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--on-dark-soft);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav ul a:hover {
+    color: var(--on-dark);
+  }
+
+  .nav ul a[aria-current='page'] {
+    color: var(--on-dark);
+    border-bottom-color: var(--caramel);
+  }
+
+  .burger {
+    display: none;
+    background: none;
+    border: 1px solid var(--line-dark);
+    color: var(--on-dark);
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 820px) {
+    .burger {
+      display: inline-flex;
+    }
+
+    .nav ul {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      flex-direction: column;
+      gap: 0;
+      background: var(--roast);
+      border-bottom: 1px solid var(--line-dark);
+      padding: 8px max(20px, env(safe-area-inset-left, 0px)) 14px;
+      display: none;
+    }
+
+    .nav ul.open {
+      display: flex;
+    }
+
+    .nav ul a {
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line-dark);
+    }
+
+    .nav ul a[aria-current='page'] {
+      border-bottom-color: var(--caramel);
+    }
+  }
+</style>
+
+<script>
+  const burger = document.getElementById('nav-burger');
+  const list = document.getElementById('navlist');
+
+  if (burger && list) {
+    const setOpen = (open: boolean) => {
+      list.classList.toggle('open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+    };
+
+    burger.addEventListener('click', () => {
+      setOpen(!list.classList.contains('open'));
+    });
+
+    // Tutup menu setelah memilih halaman (penting untuk navigasi client-side).
+    list.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => setOpen(false))
+    );
+
+    // Tutup saat klik di luar atau tekan Escape.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && list.classList.contains('open')) {
+        setOpen(false);
+        burger.focus();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!list.classList.contains('open')) return;
+      const target = e.target as Node;
+      if (!list.contains(target) && !burger.contains(target)) setOpen(false);
+    });
+
+    // Reset state saat lebar layar kembali ke desktop.
+    const mq = window.matchMedia('(min-width: 821px)');
+    mq.addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

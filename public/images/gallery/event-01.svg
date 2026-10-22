@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="EVENT">
+  <title>EVENT</title>
+  <rect width="900" height="1200" fill="#4A3524" />
+  <g opacity="0.18" stroke="#F5EFE6" stroke-width="2" fill="none">
+    <rect x="80" y="100" width="240" height="180" rx="6" /><path d="M140 70 v60 M260 70 v60 M80 160 h240" />
+  </g>
+  <text x="450" y="610" text-anchor="middle" font-family="Georgia, serif" font-size="75" fill="#F5EFE6" opacity="0.75" letter-spacing="2">EVENT</text>
+</svg>

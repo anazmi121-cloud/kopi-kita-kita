@@ -1,0 +1,75 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Satu sel galeri. Dibiarkan sebagai <button> supaya bisa dibuka di lightbox.
+ * Skrip lightbox ada di halaman Galeri (ditempelkan sekali saja).
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  ratio?: string;
+  index?: number;
+}
+
+const { src, alt, caption = '', ratio = 'r43', index = 0 } = Astro.props;
+---
+
+<button
+  type="button"
+  class="gal-item"
+  data-gal-src={src}
+  data-gal-alt={alt}
+  data-gal-caption={caption}
+  data-gal-index={index}
+  aria-label={`Perbesar foto: ${alt}`}
+>
+  <span class="frame" class:list={[ratio]}>
+    {
+      src ? (
+        <img src={src} alt={alt} loading="lazy" decoding="async" />
+      ) : (
+        <span class="ph">
+          <span class="ph-ic">
+            <Icon name="image" size={28} />
+          </span>
+          <span class="ph-cap">Foto belum tersedia</span>
+        </span>
+      )
+    }
+  </span>
+  {caption && <span class="gal-cap">{caption}</span>}
+</button>
+
+<style>
+  .gal-item {
+    display: block;
+    width: 100%;
+    margin: 0 0 14px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    break-inside: avoid;
+    text-align: left;
+  }
+
+  .gal-item :global(.frame) {
+    display: block;
+  }
+
+  .gal-item:hover :global(.frame),
+  .gal-item:focus-visible :global(.frame) {
+    outline: 2px solid var(--caramel);
+    outline-offset: -2px;
+  }
+
+  .gal-cap {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    line-height: 1.35;
+  }
+</style>

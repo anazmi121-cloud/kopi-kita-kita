@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="TEH">
+  <title>TEH</title>
+  <rect width="800" height="800" fill="#4A3B2A" />
+  <g opacity="0.18" stroke="#F5EFE6" stroke-width="2" fill="none">
+    <path d="M140 90 h100 l-15 110 a20 20 0 0 1 -20 18 h-30 a20 20 0 0 1 -20 -18 z" /><path d="M240 120 a35 35 0 0 1 0 60" /><path d="M165 70 q10 -25 0 -40 M200 70 q10 -25 0 -40 M235 70 q10 -25 0 -40" />
+  </g>
+  <text x="400" y="410" text-anchor="middle" font-family="Georgia, serif" font-size="50" fill="#F5EFE6" opacity="0.75" letter-spacing="2">TEH</text>
+</svg>

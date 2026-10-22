@@ -1,0 +1,10 @@
+{
+  "name": "Cappuccino",
+  "category": "coffee",
+  "price": "Rp XX.XXX",
+  "description": "Satu bagian espresso, satu bagian susu steamed, satu bagian busa tebal yang lembut.",
+  "image": "/images/menu/cappuccino.svg",
+  "featured": false,
+  "available": true,
+  "order": 4
+}

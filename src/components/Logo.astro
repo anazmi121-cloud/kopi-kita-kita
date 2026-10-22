@@ -1,0 +1,79 @@
+---
+/**
+ * Logo Kopi Kita Kita.
+ *
+ * CARA MENGGANTI LOGO (pilih salah satu):
+ *
+ * 1. Pakai file gambar (disarankan untuk logo asli):
+ *    - Taruh file baru di /public/images/logo/ (SVG, PNG, atau WebP)
+ *    - Ubah nilai "logo" pada src/content/settings/site.json
+ *      jadi "/images/logo/nama-file-kamu.svg"
+ *    - Atau pilih file langsung dari dashboard CMS -> Pengaturan Situs
+ *      (field "Logo"), lewat Media Library.
+ *
+ * 2. Pakai wordmark bawaan (default, jika "logo" kosong):
+ *    - Edit src/components/Logo.astro bagian <svg>
+ *    - Memakai currentColor, jadi otomatis menyesuaikan navbar/footer gelap.
+ *
+ * Kalau file hilang, komponen ini jatuh ke mark bawaan (inline SVG) supaya
+ * navbar tidak pernah tampil kosong.
+ */
+interface Props {
+  src?: string;
+  height?: number;
+  class?: string;
+}
+
+const { src, height = 46, class: className = '' } = Astro.props;
+const hasImage = Boolean(src);
+---
+
+{
+  hasImage ? (
+    <img
+      class:list={['logo-img', className]}
+      src={src}
+      alt="Kopi Kita Kita"
+      height={height}
+      width={height * 2.4}
+      style={`height:${height}px;width:auto`}
+      loading="eager"
+      decoding="async"
+    />
+  ) : (
+    <svg
+      class:list={['logo-mark', className]}
+      viewBox="0 0 150 58"
+      role="img"
+      aria-label="Kopi Kita Kita"
+      style={`height:${height}px;width:auto`}
+    >
+      {/* Gelas kopi + uap (mark bawaan) */}
+      <g
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 20h30v14a12 12 0 0 1-12 12h-6a12 12 0 0 1-12-12z" />
+        <path d="M34 24h4a7 7 0 0 1 0 14h-4" />
+        <path d="M2 50h38" />
+        <path d="M13 14c0-4 4-4 4-8" />
+        <path d="M22 14c0-4 4-4 4-8" />
+      </g>
+
+      {/* Wordmark — Cinzel (serif premium) */}
+      <g
+        font-family="Cinzel, Georgia, 'Times New Roman', serif"
+        font-size="15"
+        font-weight="700"
+        fill="currentColor"
+        letter-spacing="1.6"
+      >
+        <text x="50" y="24">KOPI</text>
+        <text x="50" y="44">KITA KITA</text>
+      </g>
+    </svg>
+  )
+}

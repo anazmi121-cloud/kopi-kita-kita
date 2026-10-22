@@ -1,0 +1,67 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Latar foto untuk section (hero, band foto, CTA).
+ *
+ * CARA MENGGANTI FOTO LATAR:
+ * - Taruh file baru di /public/images/backgrounds/ (jpg / png / webp)
+ * - Ubah path-nya di src/content/settings/site.json -> "backgrounds" -> "hero"
+ *   (atau lewat dashboard CMS -> Pengaturan Situs)
+ *
+ * Kalau path tidak ada / file hilang, komponen ini menampilkan placeholder
+ * berlabel sehingga layout tidak pernah rusak.
+ */
+interface Props {
+  src?: string;
+  alt?: string;
+  label?: string;
+  loading?: 'eager' | 'lazy';
+  position?: string;
+}
+
+const {
+  src,
+  alt = '',
+  label = 'Foto Kopi Kita Kita',
+  loading = 'eager',
+  position = 'center',
+} = Astro.props;
+---
+
+{
+  src ? (
+    <div class="photo-bg">
+      <img src={src} alt={alt} loading={loading} decoding="async" style={`object-position:${position}`} />
+    </div>
+  ) : (
+    <div class="photo-bg">
+      <div class="ph" role="img" aria-label={`${label} — foto belum tersedia`}>
+        <span class="ph-ic">
+          <Icon name="image" size={34} />
+        </span>
+        <span class="ph-cap">Foto contoh</span>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .photo-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .photo-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-bg :global(.ph) {
+    min-height: 100%;
+  }
+</style>

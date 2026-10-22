@@ -1,0 +1,10 @@
+{
+  "name": "Croissant",
+  "category": "food",
+  "price": "Rp XX.XXX",
+  "description": "Croissantment buttery dengan tekstur renyah di luar dan lembut di dalam.",
+  "image": "/images/menu/croissant.svg",
+  "featured": true,
+  "available": true,
+  "order": 7
+}

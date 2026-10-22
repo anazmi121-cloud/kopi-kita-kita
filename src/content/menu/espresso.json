@@ -1,0 +1,10 @@
+{
+  "name": "Espresso",
+  "category": "coffee",
+  "price": "Rp XX.XXX",
+  "description": "Ekstraksi tunggal yang intens, dengan aroma kakao dan nut yang berlapis.",
+  "image": "/images/menu/espresso.svg",
+  "featured": true,
+  "available": true,
+  "order": 1
+}

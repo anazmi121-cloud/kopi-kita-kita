@@ -1,0 +1,313 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import Icon from '../../components/Icon.astro';
+import { getMenu } from '../../lib/data';
+
+/**
+ * Halaman Menu — katalog (bukan toko online).
+ * Pencarian dan filter berjalan di sisi klien tanpa reload halaman.
+ */
+const items = await getMenu();
+
+const CATEGORIES = [
+  { key: 'all', label: 'All' },
+  { key: 'coffee', label: 'Coffee' },
+  { key: 'non-coffee', label: 'Non-Coffee' },
+  { key: 'food', label: 'Food' },
+];
+---
+
+<PublicLayout
+  title="Menu"
+  description="Katalog kopi, non-coffee, dan makanan Kopi Kita Kita."
+  current="/menu/"
+>
+  <section class="page-hero dark">
+    <div class="wrap">
+      <span class="eyebrow">Katalog</span>
+      <h1>Menu Kopi Kita Kita</h1>
+      <p>
+        Pilihan kopi, non-coffee, dan makanan ringan. Gunakan pencarian atau filter
+        untuk menemukan yang Anda cari.
+      </p>
+    </div>
+  </section>
+
+  <section class="band cream">
+    <div class="wrap">
+      <!-- ===== Search + filter ===== -->
+      <div class="toolbar">
+        <div class="search">
+          <Icon name="search" size={18} class="search-ic" />
+          <label class="vh" for="menu-search">Cari produk</label>
+          <input
+            type="search"
+            id="menu-search"
+            placeholder="Cari nama atau deskripsi produk..."
+            autocomplete="off"
+            aria-describedby="menu-count"
+          />
+          <button type="button" class="clear" id="menu-clear" aria-label="Hapus kata pencarian">
+            <Icon name="x" size={17} />
+          </button>
+        </div>
+
+        <div class="chips" role="group" aria-label="Filter kategori">
+          {
+            CATEGORIES.map((c) => (
+              <button
+                type="button"
+                class="chip"
+                data-cat={c.key}
+                aria-pressed={c.key === 'all' ? 'true' : 'false'}
+              >
+                {c.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <p class="count" id="menu-count" role="status" aria-live="polite">
+        Menampilkan {items.length} produk
+      </p>
+
+      <!-- ===== Grid produk ===== -->
+      <div class="grid" id="menu-grid">
+        {
+          items.map((item) => (
+            <div
+              class="grid-cell"
+              data-name={item.data.name.toLowerCase()}
+              data-desc={item.data.description.toLowerCase()}
+              data-category={item.data.category}
+            >
+              <ProductCard
+                name={item.data.name}
+                description={item.data.description}
+                price={item.data.price}
+                image={item.data.image}
+                category={item.data.category}
+                href={`/menu/${item.id}/`}
+                available={item.data.available}
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- ===== Empty state ===== -->
+      <div class="empty" id="menu-empty" hidden>
+        <h3>Belum ada yang cocok</h3>
+        <p>
+          Kami tidak menemukan produk untuk pencarian ini. Coba kata lain, atau lihat
+          seluruh katalog.
+        </p>
+        <button type="button" class="btn ghost" id="menu-reset">Tampilkan Semua Menu</button>
+      </div>
+    </div>
+  </section>
+</PublicLayout>
+
+<style>
+  /* ---------- Page hero ---------- */
+  .page-hero {
+    background: var(--roast);
+    color: var(--on-dark);
+  }
+
+  .page-hero .wrap {
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+
+  .page-hero h1 {
+    max-width: 12ch;
+  }
+
+  .page-hero p {
+    margin-top: 20px;
+    max-width: 46ch;
+    color: var(--on-dark-soft);
+    font-size: 1.1rem;
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 30px;
+  }
+
+  .search {
+    position: relative;
+    max-width: 560px;
+  }
+
+  .search input {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: #fffaf1;
+    border: 1px solid var(--line-light);
+    border-radius: var(--r-pill);
+    padding: 15px 48px 15px 50px;
+  }
+
+  .search input::placeholder {
+    color: var(--ink-soft);
+  }
+
+  .search :global(.search-ic) {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    pointer-events: none;
+  }
+
+  .search .clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 0;
+    color: var(--ink-soft);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search .clear.show {
+    display: inline-flex;
+  }
+
+  .search .clear:hover {
+    color: var(--ink);
+    background: rgba(42, 33, 27, 0.07);
+  }
+
+  /* ---------- Chip filter ---------- */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    font: 600 0.88rem/1 var(--font-body);
+    padding: 12px 20px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-light);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .chip:hover {
+    background: rgba(42, 33, 27, 0.06);
+  }
+
+  .chip[aria-pressed='true'] {
+    background: var(--caramel);
+    border-color: var(--caramel);
+    color: #fff;
+  }
+
+  .count {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+
+  .grid-cell[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  const search = document.getElementById('menu-search') as HTMLInputElement | null;
+  const clearBtn = document.getElementById('menu-clear');
+  const resetBtn = document.getElementById('menu-reset');
+  const grid = document.getElementById('menu-grid');
+  const empty = document.getElementById('menu-empty');
+  const count = document.getElementById('menu-count');
+  const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+
+  let activeCat = 'all';
+
+  const cells = () => Array.from(grid?.querySelectorAll<HTMLElement>('.grid-cell') ?? []);
+
+  function apply() {
+    const q = (search?.value ?? '').trim().toLowerCase();
+    let shown = 0;
+
+    cells().forEach((cell) => {
+      const name = cell.dataset.name ?? '';
+      const desc = cell.dataset.desc ?? '';
+      const cat = cell.dataset.category ?? '';
+
+      const matchCat = activeCat === 'all' || cat === activeCat;
+      const matchText = !q || name.includes(q) || desc.includes(q);
+
+      const visible = matchCat && matchText;
+      cell.hidden = !visible;
+      if (visible) shown++;
+    });
+
+    // Pesan jumlah
+    if (count) {
+      count.textContent =
+        shown === 0
+          ? 'Tidak ada produk yang cocok'
+          : `Menampilkan ${shown} produk${q ? ` untuk "${search?.value.trim()}"` : ''}`;
+    }
+
+    // Empty state
+    if (empty) empty.hidden = shown !== 0;
+
+    // Tombol hapus pencarian
+    clearBtn?.classList.toggle('show', Boolean(q));
+  }
+
+  search?.addEventListener('input', apply);
+
+  clearBtn?.addEventListener('click', () => {
+    if (!search) return;
+    search.value = '';
+    apply();
+    search.focus();
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    if (search) search.value = '';
+    activeCat = 'all';
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.cat === 'all')));
+    apply();
+    search?.focus();
+  });
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      activeCat = chip.dataset.cat ?? 'all';
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      apply();
+    });
+  });
+
+  // Escape untuk mengembalikan fokus ke kolom pencarian
+  search?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && search.value) {
+      e.stopPropagation();
+      search.value = '';
+      apply();
+    }
+  });
+</script>
